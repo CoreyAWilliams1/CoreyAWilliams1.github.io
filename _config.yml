@@ -17,12 +17,12 @@ author: "Corey A. Williams"
 # --- List of links in the navigation bar --- #
 
 navbar-links:
-  Home: "https://CoreyAWilliams1.github.io/"
+  Home: "https://coreyawilliams1.github.io/"
   About Me: "aboutme"
 #  Resources:
     - Beautiful Jekyll: "https://beautifuljekyll.com"
     - Learn markdown: "https://www.markdowntutorial.com/"
-  Author's home: "https://CoreyAWilliams1.github.io/"
+  Author's home: "https://coreyawilliams1.github.io/"
 
 # --- Logo --- #
 
