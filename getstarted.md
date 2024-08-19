@@ -87,7 +87,7 @@ Click on the __*Fork*__ button at the top right corner of this page. Forking mea
 <style>
 
 .gs-section-02 h3 { 
-     color: #2E8B57 }
+     color: #732670 }
 
 .gs-section-02 p {
      font-size: 15px;
@@ -108,7 +108,7 @@ You'll see the word "repository" used a lot in GitHub - it simply means "project
 <style>
 
 .gs-section-03 h3 { 
-     color: #008080 }
+     color: #ff5e6c }
 
 .gs-section-03 p {
      font-size: 25px;
