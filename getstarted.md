@@ -87,7 +87,8 @@ Click on the __*Fork*__ button at the top right corner of this page. Forking mea
 <style>
 
 .gs-section-02 h3 { 
-     color: #732670 }
+     color: #732670;
+     font-family: serif}
 
 .gs-section-02 p {
      font-size: 15px;
