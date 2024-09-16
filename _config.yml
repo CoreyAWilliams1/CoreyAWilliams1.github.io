@@ -17,13 +17,16 @@ author: "Corey A. Williams"
 # --- List of links in the navigation bar --- #
 
 navbar-links:
+  Home: "https://coreyawilliams1.github.io/"
   About Me: "aboutme"
   Resources:
     - Beautiful Jekyll: "https://beautifuljekyll.com"
     - Learn markdown: "https://www.markdowntutorial.com/"
     - Getting Started: "getstarted" 
   Table Demo: "table-demo"              # ADD THIS LINK
-  Author's home: "https://deanattali.com"
+  Code-Throughs: "Code_Through_2D_Datasets"
+    - 2D Datasets: 
+  
 
 # --- Logo --- #
 
