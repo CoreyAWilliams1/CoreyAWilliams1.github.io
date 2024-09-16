@@ -25,7 +25,7 @@ navbar-links:
     - Getting Started: "getstarted" 
   Table Demo: "table-demo"              # ADD THIS LINK
   Code-Throughs: 
-    - 2D Datasets: "CodeThrough_2D_Datasets_Williams.md"
+    - 2D Datasets: "CodeThrough_2D_Datasets_Williams.html"
   
 
 # --- Logo --- #
