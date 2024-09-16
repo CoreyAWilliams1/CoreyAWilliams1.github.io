@@ -1,0 +1,712 @@
+---
+title: "PAF 514 Code Through: Two-Dimensional Datasets"
+author: "Corey A. Williams"
+output: 
+  html_document:
+    toc_title: "Table of Contents"
+    code_folding: show
+    #css: style.css
+    number_sections: yes
+    toc: yes
+    toc_depth: 4
+    toc_float:
+      collapsed: no
+      smooth_scroll: yes
+    highlight: tango
+    theme: bootstrap
+---
+***
+
+```{css, echo=FALSE} 
+
+
+/*flexible wrapping sections in table of contents that flexes with window size and maintains tabs*/
+  #TOC {
+    max-width: fit-content;
+    white-space: wrap;
+  
+  }
+  
+  div:has(> #TOC) {
+    display: flex;
+    flex-direction: row-reverse;
+}
+
+.tocify{
+border: dashed;
+font-weight: bold;
+}
+
+```
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r, include=FALSE}
+
+# LOAD PACKAGES
+library(tidyverse)
+library(dplyr)
+library(fontawesome) # for Back to top button
+```
+
+
+
+
+# Dataframes
+***
+**Data frames** are data displayed in a table format, comprised of columns and rows. Different columns can have different **data types**; however, each individual column should have a single data type. Data frames are similar to **lists**, with the restriction that each member must be of the same length. To avoid unexpected behavior, a dataframe should be "**tidy**." 
+
+The following three rules make a dataset tidy: *variables are columns, observations are rows, and values are cells*.
+
+## Creating data frames from vectors
+Vectors are a list of combined observation values.
+
+Create a vector for each variable by combining each variable's observations using the **c()** function. 
+
+Combine the vectors into a data frame using the **data.frame()** function.
+```{r}
+# create vectors
+# vector <- c(observation1, observation2, observation3)
+variable1_vector <- c("row1", "row2", "row3") # variable1 as a vector named "variable1_vector" with length of 3 combined observations
+variable2_vector <- c(1, 2, 3)                # variable2 as a vector named "variable2_vector" with length of 3 combined observations
+variable3_vector <- c("a", "b", "c")          # variable3 as a vector named "variable3_vector" with length of 3 combined observations
+
+# Create a data frame from those vectors
+# dataframe <- data.frame(column1, column2, coulumn3)
+data_frame <- data.frame(                 # combine the vectors into a data frame
+  variable1_column = variable1_vector,       # assign the variable vector to a column
+  variable2_column = variable2_vector,       # assign the variable vector to a column         
+  variable3_column = variable3_vector        # assign the variable vector to a column   
+)
+# print the dataframe named data_frame0
+data_frame
+```
+A data frame can be created using data from a file too with the following syntax:
+```{r}
+# from general file
+# data_frame <- read.table("Path of the file", header = FALSE) # use only / and not \
+
+# from csv
+# data_frame <- read.csv("FileName.csv")            # use only / and not \
+
+# from a url
+# URL <- 'https://webaddress.com'                   # use only / and not \
+# data_frame <- read.csv( URL )
+```
+### rows and columns
+The **rows** are the horizontal collection of observations accross all variables.  Row 1 consists of row1, 1, and a, for example. The rows do not have labels except for the printed line numbers.  
+The **columns** are the vertical collection of observations for each single variable. The fist column is named variable1_column.  
+The data frame essentially turns the vectors into vertical columns.  
+There must be the same number of observations in each column (the observations for each variable must be the same). otherwise, the data will need to be reformatted or limited in range, for example, to display "NA" or "missing" for the missing observations.
+```{r}
+# Create a data frame  
+data_frame <- data.frame(
+  variable1_column = c("row1", "row2", "row3"), # named column variable is a combined list of 3 observation values, vector with length of 3
+  variable2_column = c(1, 2, 3),                # named column variable is a combined list of 3 observation values, vector with length of 3
+  variable3_column = c("a", "b", "c")           # named column variable is a combined list of 3 observation values, vector with length of 3
+)
+# print the dataframe named data_frame
+data_frame
+
+# list the dataframe column names/ variables
+colnames(data_frame)
+# count the columns
+ncol(data_frame)
+# observe the rows
+row.names(data_frame)
+# count the rows
+nrow(data_frame)
+# dimensions
+dim(data_frame)
+```
+## the $ operator
+The **$** operator is used to extract data from a data frame or list by the column name for data frames or the element name for lists (only one column at a time).  
+The $ operator can be used to add or delete data to/from data frames or lists.  
+The $ operator takes two arguments before and after the $ to target data.
+```{r}
+# print the dataframe named data_frame
+data_frame
+
+# extract variable3_column and store it 
+variable3.1_column <- data_frame$variable3_column
+variable3.1_column
+
+# add column to dataframe
+data_frame$variable3.1_column <- variable3.1_column
+data_frame
+
+# delete column from dataframe
+data_frame$variable3.1_column <- NULL
+data_frame
+```
+## Checking and changing class types
+Identifying an object's class is needed for functions that operate on stored objects because they can behave differently depending on the object class type.  
+
+**Common Object Class Types in R**  
+
+|   1. **Numeric**: Represents numbers (e.g., integers, doubles).  
+|   2. **Character**: Represents text strings.  
+|   3. **Factor**: Represents categorical data, stored as integer codes with associated levels.  
+|   4. **Logical**: Represents Boolean values (TRUE, FALSE).  
+|   5. **Date/POSIXct**: Represents date and date-time objects.  
+|   6. **Integer**: A subtype of numeric, specifically representing integer values.  
+|   7. **Data Frame**: A table-like structure with columns of different types.  
+|   8. **Matrix**: A 2-dimensional array-like structure of a single type.  
+|   9. **List**: A collection of elements that can be of different types.  
+<br>
+There are a few ways to check for an object's class type.
+
+Use the **str()** funtion to display the internal structure of the data frame
+Use the **sapply()** and **class()** to display the class of each variable.
+```{r}
+# str(object)
+str(data_frame)
+
+# sapply(object,class)
+sapply(data_frame, class)
+
+# class(object)
+class(data_frame)
+class(variable3.1_column)
+class(data_frame$variable1_column)
+
+# check all as dataframe
+as.data.frame(sapply(data_frame,class))
+```
+<br>
+
+**is.*** and **as.*** functions can be used to check both class and variable types and **coerce** (change) to another type, respectively.
+
+
+The is.* function will logically confirm or deny the proposed class type.
+```{r}
+data_frame
+
+# is.class(object)
+is.numeric(data_frame$variable1_column)
+is.character(data_frame$variable1_column)
+sapply(data_frame, class)
+```
+<br>
+
+The as.* function is how the user explicitly coerces an object from one class type to another and is used when R does not do this implicitly.
+```{r}
+# View Dataframe original
+data_frame
+#Veiw Dataframe class types of the columns
+sapply(data_frame, class)
+
+# View the second column
+data_frame$variable2_column
+
+# Change the object class types of the columns
+# as.class(object)
+data_frame$variable2_column <- as.character(data_frame$variable2_column)
+
+# View the updated object class types of the columns
+sapply(data_frame, class)
+
+# View the second column after change and notice the quotes.
+data_frame$variable2_column
+```
+**Some Object Class Type Conversions:**
+```{r}
+##      From Class    To Class		  as.* Function                     Details
+## 1    Numeric    	  Character     as.character()....................Converts numeric to text.
+## 2                  Factor        as.factor().......................Converts numeric to factor with levels equal to unique values.
+## 3                  Logical       as.logical()......................Converts 0 to FALSE and any non-zero to TRUE.
+## 4                  Integer       as.integer()......................Converts numeric to integer, truncating decimals.
+## 5                  Date        	as.Date() or as.POSIXct().........Converts from numeric representation of date-time to Date or POSIXct with origin.
+## 6    Character     Numeric       as.numeric()......................Converts numbers in character form to numeric; non-numeric strings become NA.
+## 7                  Factor        as.factor().......................Converts text to categorical factor with unique levels.
+## 8                  Logical       as.logical()......................Converts TRUE to TRUE, FALSE to FALSE; other strings become NA.
+## 9               	  Date/POSIXct  as.Date() or as.POSIXct() ........Converts strings in a recognized date format to Date or POSIXct.
+## 10   Factor        Character     as.character()....................Converts factor levels to text.
+## 11                 Numeric 		  as.numeric(as.character(factor))..Converts factor levels to their numeric equivalents (requires conversion to character first).
+## 12                 Integer       as.integer()......................Converts factor levels to their internal integer representation.
+## 13   Logical      	Numeric       as.numeric()......................Converts TRUE to 1 and FALSE to 0.
+## 14                 Character     as.character()....................Converts TRUE to TRUE and FALSE to FALSE.
+## 15                 Factor        as.factor().......................Converts TRUE/FALSE to factor levels.
+## 16 	Date/POSIXct  Character     as.character()....................Converts date or date-time objects to string representations.
+## 17                 Numeric       as.numeric()......................Converts date or date-time to numeric form (number of days/seconds since origin).
+## 18   Data Frame    Matrix        as.matrix().......................Converts a data frame to a matrix, coercing all columns to the same type.
+## 19   Matrix      	Data Frame    as.data.frame()...................Converts a matrix to a data frame.
+## 20   List      	  Data Frame    as.data.frame()...................Converts a list with compatible components to a data frame.
+```
+<br>
+
+
+**Important Notes on Conversions**  
+
+| **Coercion Warnings**: Conversions can lead to data loss or NA values when the conversion is not straightforward (e.g., converting non-numeric characters to numeric will result in NA).  
+
+| **Factors to Numeric**: Converting a factor directly to numeric will give the underlying integer codes. To get the actual numeric values, you must first convert it to a character, then to numeric (e.g., as.numeric(as.character(factor))).  
+
+| **Date and POSIXct**: Dates can be tricky; you need to specify the format or origin when converting from a numeric to a Date or POSIXct.  
+
+| **Data Frames to Matrices**: When converting a data frame to a matrix, all data will be coerced to the same type, usually character if there's any non-numeric data.
+<br>
+
+# Dataframe Subsets
+***
+
+Data frame sub-setting refers to the process of selecting specific rows, columns, or both from a data frame. This allows you to isolate or filter parts of the data in the data frame.
+
+Subset a data frame using base R syntax with the [] operator or a more intuitive method using the dplyr package.
+
+## Filter rows and select columns
+### the [] operator
+
+The [] operator in base R is commonly used for sub-setting data frames by rows and columns. It has the form df[rows, columns], where both the row and column specifications are optional. This allows you to filter rows and select columns in different ways.
+
+Rows can be numeric indices (e.g., 1:3), logical conditions (e.g., df$column > 5), or negative indices (e.g., -1 to exclude the first row).
+
+Columns can be indices, column names (e.g., c("column1", "column2")), or logical conditions.
+<br>
+
+```{r}
+# Create a data frame
+df <- data.frame(x = 1:5, y = letters[1:5], z = c(10, 20, 30, 40, 50))
+df
+
+# Filter rows 1 to 3 and select all columns
+# df[rows, columns]
+df[1:3, ]
+
+# Select only the "x" and "y" columns
+# df[rows, columns]
+df[, c("x", "y")]
+
+# Filter rows where x > 2 and select columns "x" and "y"
+df[df$x > 2, c("x", "y")]
+```
+### dplyr::filter and dplyr::select
+The dplyr package provides a more intuitive and efficient way to filter and select data using the filter() and select() functions.
+```{r}
+df
+
+# Filter rows where x > 2
+df_filtered <- df %>% filter(x > 2)
+df_filtered
+
+# Select columns x and y
+df_selected <- df %>% select(x, y)
+df_selected
+
+# Combine filtering and selecting
+df_filtered_selected <- df %>% filter(x > 2) %>% select(x, y)
+df_filtered_selected 
+```
+
+## Reorder rows or columns
+```{r}
+
+```
+### sort() versus order()
+
+**sort()** sorts a vector (column) but doesn’t change the order of the rows in the data frame.  
+
+**order()** returns the indices used to reorder the rows of a data frame based on one or more columns.
+```{r}
+df
+
+# Sort a single column (vector) such as x
+sorted_x <- sort(df$x)
+sorted_x
+```
+
+
+```{r}
+# Reorder rows of the data frame based on x column
+df_ordered <- df[order(df$x), ]
+df_ordered
+```
+
+### dplyr::arrange
+**arrange()** reorders rows based on one or more columns.
+```{r}
+# Reorder rows based on the x column in ascending order (default)
+df_arranged_asc <- df %>% arrange(x)
+df_arranged_asc
+
+# Reorder rows based on the x column in descending order
+df_arranged_desc <- df %>% arrange(desc(x))
+df_arranged_desc
+```
+# Dataframe Constructors
+***
+
+**Data frame constructors** are functions used for the creation of data frames. They are two-dimensional data objects with rows and columns and can handle a variety of data types within the very same structure.
+
+## Building data objects:
+
+**data.frame()** combines vectors of the same length into columns of varying data types.Does implicitly coerce character vectors to factors (can be restricted with **stringsAsFactors = FALSE** argument).  
+
+**tibble()**  creates data frame tibbles that are nice. tibbles do not implicitly coerce character vectors to factor.  
+
+**data.table()** great for large data sets, fast aggregation, and efficient table manipulation.
+
+```{r, warning=FALSE, message=FALSE}
+# create data frame from data.frame()
+df <- data.frame(
+  Label = c("one", "two", "three"),
+  Measure = c(10, 20, 30),
+  height = c(1.1, 1.2, 1.3)
+)
+df
+
+# create data frame from tibble()
+library(tibble)
+
+df_tibble <- tibble(
+  Label = c("one", "two", "three"),
+  Measure = c(10, 20, 30),
+  height = c(1.1, 1.2, 1.3)
+)
+df_tibble
+
+# create data frame from data.table()
+library(data.table)
+
+df_data.table <- data.table(
+  Label = c("one", "two", "three"),
+  Measure = c(10, 20, 30),
+  height = c(1.1, 1.2, 1.3)
+)
+df_data.table
+```
+### data.frame() vs cbind() and rbind()
+As noted before, data.frame() creates data frames from vectors.  This data frame can have columns as well as rows added to it with cbind() and rbind() functions, respectively.  
+
+**cbind()** combines columns from multiple objects  
+
+**rbind()** combines rows from multiple objects
+
+```{r}
+# Combine columns with cbind()
+x <- 1:5
+y <- letters[1:5]
+z <- c(5, 4, 3, 2, 1)
+df_cbind <- cbind(x, y, z)
+df_cbind
+
+# Combine rows with rbind()
+df_row1 <- data.frame(x = 1, y = "a", z = 5)
+df_row2 <- data.frame(x = 2, y = "b", z = 4)
+df_rbind <- rbind(df_row1, df_row2)
+df_rbind
+
+# Coonstruct data frame from data.frame()
+df <- data.frame(x = 1:5, y = letters[1:5], z = c(10, 20, 30, 40, 50))
+df
+
+# cbind() add columns
+new_column <- c(TRUE, FALSE, FALSE, TRUE, TRUE)
+df_new_column <- cbind(df, new_column)
+df_new_column
+
+# rbind() add row 6
+new_row <- data.frame(x = 6, y = "f", z = 60, new_column = FALSE)
+df_new_row <- rbind(df_new_column, new_row)
+df_new_row
+```
+## Variable transformations in df’s
+
+Create new variables in a data frame by direct assignment.
+```{r}
+
+```
+### assignment inside a df: dat$x_squared <- x·x
+```{r}
+# Add a new column of x squared
+df$x_squared <- df$x * df$x
+df
+
+
+```
+### dplyr::mutate vs dplyr::transmute()
+
+**mutate()** adds new variables (columns) or modifies them and keeps all other columns as they are.  
+
+**transmute()** adds or modifies variables (columns), but only returns the created transformed columns.  
+
+```{r}
+# Establish data frame for comparison
+df
+
+# Add new column while keeping all columns
+df_mutate <- df %>% mutate(z_squared = z * z)
+df_mutate
+
+# Modify column while keeping all columns
+df_mutate <- df %>% mutate(z_squared = x * x)
+df_mutate
+
+# Add a new column and keep only the transformed column
+df_transmute <- df %>% transmute(z_squared = z * z)
+df_transmute
+```
+# Matrices and Lists
+***
+
+A **matrix** is a 2D array m (rows) x n (columns) with all elements are of the *same data type* and is useful in calculations.  
+
+A **list** is a series of elements that can be of *different data types*.
+
+## Matrix
+Create a matrix using the **matrix()** function or by combining vectors with **rbind()** or **cbind()** functions.  
+
+Be sure the length of the data vector matches the number of rows and columns. If you do not supply nrow and/or ncol, default is to return a single column matrix of the data vector entries.
+
+```{r}
+# matrix(data = vectorof data, nrow = number of rows, ncol = number of columns, byrow = FALSE (FALSE = fill by column; TRUE = by row)), dimnames = NULL (Optional list of row and column names.))
+
+matricks <- matrix(data = c(1,2,3.1,4,5,6), nrow = 2, ncol = 3)
+matricks
+
+matricks_byColumn <- matrix(data = c(1,2,3.1,4,5,6), nrow = 2, ncol = 3, byrow = FALSE)
+matricks_byColumn
+
+matricks_byRow <- matrix(data = c(1,2,3.1,4,5,6), nrow = 2, ncol = 3, byrow = TRUE)
+matricks_byRow
+
+matricks_single <- matrix(data = 1:6)
+matricks_single
+```
+**rbind()** Combines vectors and matrices by row.  
+**cbind()** Combines vectors and matrices by column.
+
+```{r}
+# Create vectors
+# Combine vectors by rows using rbind(vector1, vector2)
+vector1 <- c(1,2,3)
+vector2 <- c(4:6)
+
+matricks_rbind <- rbind(vector1, vector2)
+matricks_rbind
+
+# Combine vectors by columns using cbind(vector1, vector2)
+matricks_cbind <- cbind(vector1, vector2)
+matricks_cbind
+```
+By **subsetting**, you can access elements of a matrix using the [] operator by specifying **[*row*,*column*]**  
+
+Here are a few examples:
+```{r}
+# Recall matrix for comparison
+matricks
+
+# Access element in the first row and third column
+matricks[1, 3]
+
+# Access first row
+matricks[1, ] # still include the comma
+
+# Access second column
+matricks[, 2] # still include the comma
+
+# omit row 1 and column 2
+matricks[-1,-2]
+
+# omit row 1 and retrieve 2nd and 3rd column, in that order
+matricks[-1,3:2]
+
+matricks
+
+# overwrite second row with sequence 1,2,300
+matricks_overwrite <- matricks[2,] <- c(1,2,300)
+matricks_overwrite
+
+# replace 2nd column with 3rd column
+matricks[,2] <- matricks[,3]
+matricks
+```
+A few more common matrix functions:
+
+```{r}
+matricks <- matrix(data = c(1,2,3.1,4,5,6), nrow = 2, ncol = 3)
+matricks
+
+# nrow() returns the number of rows in a matrix.
+nrow(matricks)
+
+# ncol() returns the number of columns in a matrix.
+ncol(matricks)
+
+# dim() returns the dimensions of a matrix (number of rows and columns).
+dim(matricks)
+
+# diag() extracts or creates the diagonal of a matrix.
+diag(matricks)
+
+# solve() finds the inverse of a matrix (square matrix only).
+matricks <- matrix(data = c(1,2,3,4,5,6), nrow = 3, ncol = 2)
+matricks
+#solve(matrix)
+
+# rowSums() sums each row's elements
+rowSums(matricks)
+
+# colSums() sums each column's elements.
+colSums(matricks)
+
+# t() transposes a matrix.
+t(matricks)
+```
+
+## Lists
+
+Create a **list** using the **list()** function or by combining vectors with **rbind()** or **cbind()** functions.  
+
+The elements of a list can be of *different data types* including numeric, character, logical, other lists, matrices, and data frames.
+
+```{r}
+# List(element1, element2, ...)
+my_list <- list(name = c("Bob", "John", "Devon"), age = c(10, 50, 100.5), scores = c(100, 50, 76), is_student = TRUE)
+my_list
+
+```
+Access list elements using [] operator returns a sub-list. Use the [[ ]] operator returns the actual element. You can use the $ operator to access named elements as well.
+
+
+```{r}
+# Access name element using $
+my_list$name
+
+# Access scores element using [[ ]]
+my_list[[3]] 
+
+# Access age element using its name
+my_list[["age"]]
+
+# Modify name element
+my_list$name <- c("Bob", "John", "New Guy")
+
+# Add a new element to the list
+my_list$sports <- FALSE
+my_list
+```
+Nested lists embed lists in a list.
+
+```{r}
+# Make nested list
+nested_list <- list(individual = my_list, program = list( degree = "masters", subject = c("Math", "Economics")))
+nested_list
+```
+## Conversions:
+Data Frames to Matrices: When converting a data frame to a matrix, all data will be coerced to the same type, usually character if there’s any non-numeric data.
+
+### matrix to df
+as.data.frame() Converts a matrix to a data frame.
+```{r}
+matricks
+
+as.data.frame(matricks)
+```
+
+### list to df
+Convert the list to a data frame using the as.data.frame() function if all list elements are vectors of the same length. 
+```{r}
+my_list
+
+as.data.frame(my_list)
+```
+
+***
+<center>
+<a href="#top" style="color:steelblue;" >Back to top</a> [`r fa("arrow-up", height = "2em", width = "1em", fill = "steelblue")`](#)
+</center>
+
+<br>
+
+# *Document setup*
+
+<br>
+<br>
+
+*yaml header with TOC*
+```{r, class.source = "fold-hide"}
+# yaml heading
+
+# ---
+# title: "PAF 514 Code Through: Two-Dimensional Datasets"
+# author: "Corey A. Williams"
+# output: 
+#   html_document:
+#     toc_title: "Table of Contents"
+#     code_folding: show  #```{r, class.source = "fold-hide"} to hide auto code show in a code chunk
+#     #css: style.css     #(can put css code chunk in another file IN SAME FOLDER)
+#    number_sections: yes
+#    toc: yes             # TOC (Table of Contents)
+#    toc_depth: 4
+#    toc_float:
+#      collapsed: no
+#      smooth_scroll: yes
+#    highlight: tango
+#    theme: bootstrap
+# ---
+```
+*css code chunk at top to format TOC beyond yaml header*
+```{r, class.source = "fold-hide"}
+# CSS code chunk at top to format TOC beyond yaml header
+
+# ```{css, echo=FALSE} 
+# /*flexible wrapping sections in table of contents that flexes with window size and maintains tabs*/
+#  #TOC {
+#    max-width: fit-content;
+#    white-space: wrap;
+#  }
+  
+#  div:has(> #TOC) {
+#    display: flex;
+#    flex-direction: row-reverse;
+#}
+
+# .tocify{
+# border: dashed;
+# font-weight: bold;
+# }
+# ```
+```
+*Knit and Packages/ Library*
+```{r, class.source = "fold-hide"}
+# ```{r setup, include=FALSE}
+# knitr::opts_chunk$set(echo = TRUE)
+# ```
+
+# ```{r, include=FALSE}
+
+# # LOAD PACKAGES
+# library(tidyverse)
+# library(dplyr)
+# library(fontawesome) # for Back to top button
+# ```
+```
+*Back to top button*
+```{r, class.source = "fold-hide"}
+# Back to top button 
+
+# Place in document where wanted
+# <center>
+# <a href="#top" style="color:steelblue;" >Back to top</a> [`r fa("arrow-up", height = "2em", width = "1em", fill = "steelblue")`](#)
+# </center>
+```
+*Misc.*
+```{r, class.source = "fold-hide"}
+# *Itialic*
+# **Bold**
+# *** Horizontal line
+
+# #Header
+# ## SubHeader1
+# ### SubHeader2
+
+# For Nice Dataframe Tables:
+# library(DT)
+# datatable(df, rownames = FALSE, filter="top", options = list(pageLength = 5, scrollX=T) )
+
+# To override the state, use {r class.source = "fold-hide"} if the yaml setting is show, and {r class.source = "fold-show"} if the setting is hide.
+```
